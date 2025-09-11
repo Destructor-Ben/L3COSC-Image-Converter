@@ -1,15 +1,24 @@
 # Initialized later
-commands = {}
+commands = {} # Command name -> command
+name_to_aliases = {}  # Command name -> aliases
+alias_to_name = {}  # Alias -> command name
 
 def init():
-    register_command(quit_command, "quit")
-    register_command(help_command, "help")
-    register_command(convert_file_command, "convert-file")
-    register_command(convert_folder_command, "convert-folder")
+    register_command(quit_command, ["quit", "exit", "q"])
+    register_command(help_command, ["help"])
+    register_command(convert_file_command, ["convert-file"])
+    register_command(convert_folder_command, ["convert-folder"])
 
-# TODO: add support for aliases
-def register_command(command, command_name: str):
-    commands[command_name] = command
+# The first name in command_names will be the primary name and the others are aliases
+# TODO: add description support
+def register_command(command, command_names: list[str]):
+    commands[command_names[0]] = command
+
+    # Map aliases
+    name_to_aliases[command_names[0]] = command_names[1:]
+
+    for name in command_names:
+        alias_to_name[name] = command_names[0]
 
 # TODO: this needs to be able to parse strings in the command args
 # TODO: make an error function that ensures newlines are printed after an error/in color to make it clear to the user what is happening
@@ -22,10 +31,14 @@ def parse_command(user_input: str) -> None:
         return
     
     command_name = parts[0].lower()
-    if command_name not in commands.keys():
+    if command_name not in commands.keys() and command_name not in alias_to_name.keys():
         print(f"Unknown command: {command_name}")
         return
-    
+
+    # Map alias to command name
+    if command_name in alias_to_name.keys():
+        command_name = alias_to_name[command_name]
+
     # TODO: check if args working
     commands[command_name]([] if len(parts) == 1 else parts[1:])
     
@@ -38,11 +51,14 @@ def quit_command(args: list[str]) -> None:
 def help_command(args: list[str]) -> None:
     print("Available commands:")
     for cmd in commands.keys():
-        print(f"- {cmd}")
+        # TODO: this is bad, clean this up
+        print(f"- {cmd}{'/' if len(name_to_aliases[cmd]) > 0 else ''}{'/'.join(name_to_aliases[cmd]) if len(name_to_aliases[cmd]) > 0 else ''}")
 
+# TODO: impl
 def convert_file_command(args: list[str]) -> None:
     print("CONVERT FILE")
     
+# TODO: impl
 def convert_folder_command(args: list[str]) -> None:
     print("CONVERT FOLDER")
 

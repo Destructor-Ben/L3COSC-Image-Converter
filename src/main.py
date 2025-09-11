@@ -6,6 +6,7 @@ def init():
 def main():
     # Execute commands continuously until the user wants to exit
     while True:
+        # TODO: better prompt
         user_input = input("Enter a command >")
         commands.parse_command(user_input)
 
