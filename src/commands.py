@@ -1,4 +1,5 @@
 import tui
+import images.converter as converter
 
 # Initialized later
 commands = {} # Command name -> command
@@ -41,7 +42,7 @@ def parse_command(user_input: str) -> None:
     if command_name in alias_to_name.keys():
         command_name = alias_to_name[command_name]
 
-    # TODO: check if args working
+    # Call the function with the correct args
     commands[command_name]([] if len(parts) == 1 else parts[1:])
     
 #region Commands
@@ -58,10 +59,18 @@ def help_command(args: list[str]) -> None:
 
 # TODO: impl
 def convert_file_command(args: list[str]) -> None:
-    print("CONVERT FILE")
+    if len(args) != 1:
+        tui.error("convert-file requires exactly one argument, the file path")
+        return
+
+    converter.convert_file(args[0])
     
 # TODO: impl
 def convert_folder_command(args: list[str]) -> None:
-    print("CONVERT FOLDER")
+    if len(args) != 1:
+        tui.error("convert-folder requires exactly one argument, the folder path")
+        return
+
+    converter.convert_folder(args[0])
 
 #endregion
