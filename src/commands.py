@@ -1,9 +1,11 @@
+import tui
+
 # Initialized later
 commands = {} # Command name -> command
 name_to_aliases = {}  # Command name -> aliases
 alias_to_name = {}  # Alias -> command name
 
-def init():
+def init() -> None:
     register_command(quit_command, ["quit", "exit", "q"])
     register_command(help_command, ["help"])
     register_command(convert_file_command, ["convert-file"])
@@ -11,7 +13,7 @@ def init():
 
 # The first name in command_names will be the primary name and the others are aliases
 # TODO: add description support
-def register_command(command, command_names: list[str]):
+def register_command(command, command_names: list[str]) -> None:
     commands[command_names[0]] = command
 
     # Map aliases
@@ -27,12 +29,12 @@ def parse_command(user_input: str) -> None:
     user_input = user_input.strip()
     parts = user_input.split()
     if len(parts) < 1:
-        print("No command provided.")
+        tui.error("No command provided")
         return
     
     command_name = parts[0].lower()
     if command_name not in commands.keys() and command_name not in alias_to_name.keys():
-        print(f"Unknown command: {command_name}")
+        tui.error(f"Unknown command: {command_name}")
         return
 
     # Map alias to command name

@@ -1,14 +1,14 @@
 import commands
+import tui
 
-def init():
+def init() -> None:
+    tui.init()
     commands.init()
 
-def main():
+def main() -> None:
     # Execute commands continuously until the user wants to exit
     while True:
-        # TODO: better prompt
-        user_input = input("Enter a command >")
-        commands.parse_command(user_input)
+        tui.run_loop()
 
 if __name__ == "__main__":
     init()
