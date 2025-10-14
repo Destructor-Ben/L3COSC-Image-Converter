@@ -11,7 +11,6 @@ def init() -> None:
     set_bg_color(BG_COLOR)
 
 def run_loop() -> None:
-    # TODO: better prompt
     set_text_color(TEXT_COLOR)
     print("Enter a command > ", end="")
 
