@@ -24,17 +24,15 @@ def register_command(command, command_names: list[str], description: str) -> Non
     for name in command_names:
         alias_to_name[name] = command_names[0]
 
-# TODO: this needs to be able to parse strings in the command args
-# TODO: make an error function that ensures newlines are printed after an error/in color to make it clear to the user what is happening
-# TODO: perhaps color a bunch of the UI?
 def parse_command(user_input: str) -> None:
     user_input = user_input.strip()
-    parts = user_input.split()
-    if len(parts) < 1:
+    tokens = tokenize(user_input)
+
+    if len(tokens) < 1:
         tui.error("No command provided")
         return
     
-    command_name = parts[0].lower()
+    command_name = tokens[0].lower()
     if command_name not in commands.keys() and command_name not in alias_to_name.keys():
         tui.error(f"Unknown command: {command_name}")
         return
@@ -44,8 +42,58 @@ def parse_command(user_input: str) -> None:
         command_name = alias_to_name[command_name]
 
     # Call the function with the correct args
-    commands[command_name]([] if len(parts) == 1 else parts[1:])
-    
+    commands[command_name]([] if len(tokens) == 1 else tokens[1:])
+
+# Perform lexical analysis on the string to convert it to tokens (accounting for quotation marks)
+# TODO: temp, test string: asd asd "asd" 'asd' 'asd" ' asd"asd" asd'asd' "asd"asd 'asd'asd 'asd "asd"' "asd 'asd'"
+# TODO: handle escaped quotes
+# TODO: handle asd'asd' and asd"asd"
+def tokenize(user_input: str) -> list[str]:
+    tokens = []
+    current = ''
+    in_quotes = False  # This basically just controls whether spaces will be added and is toggled when a quote is hit
+    quote_char = ''
+
+    for c in user_input:
+        # Add a finished token if it isn't empty
+        if c == ' ' and not in_quotes:
+            if current != '':
+                tokens.append(current)
+                current = ''
+                continue
+            else:
+                continue
+
+        # Toggle in_quotes if we hit a quote character
+        if c in ['"', "'"]:
+            # End quote
+            if quote_char == c:
+                in_quotes = False
+                quote_char = ''
+                continue
+
+            # Start quote
+            if quote_char == '':
+                in_quotes = True
+                quote_char = c
+                continue
+        
+        # Add the next char to the current token
+        current += c
+
+    # Add any leftover tokens if we aren't in a quote
+    if current:
+        if in_quotes:
+            tui.error("Unfinished quoted string in input")
+        else:
+            tokens.append(current)
+
+    # TODO: temporary
+    for token in tokens:
+        print("- " + token)
+
+    return tokens
+
 #region Commands
 
 def quit_command(args: list[str]) -> None:
