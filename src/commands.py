@@ -28,6 +28,10 @@ def parse_command(user_input: str) -> None:
     user_input = user_input.strip()
     tokens = tokenize(user_input)
 
+    # Error, already handled in tokenize
+    if tokens is None:
+        return
+
     if len(tokens) < 1:
         tui.error("No command provided")
         return
@@ -45,10 +49,11 @@ def parse_command(user_input: str) -> None:
     commands[command_name]([] if len(tokens) == 1 else tokens[1:])
 
 # Perform lexical analysis on the string to convert it to tokens (accounting for quotation marks)
-# TODO: temp, test string: asd asd "asd" 'asd' 'asd" ' asd"asd" asd'asd' "asd"asd 'asd'asd 'asd "asd"' "asd 'asd'"
+# TODO: temp, test string: asd asd "asd" 'asd' asd"asd" asd'asd' "asd"asd 'asd'asd 'asd "asd"' "asd 'asd'"
+# TODO: test lots of spaces, indivudual quotes, in each of the above examples, and unfinished quotes, and fiffereing quotes e.g. 'asd"
 # TODO: handle escaped quotes
 # TODO: handle asd'asd' and asd"asd"
-def tokenize(user_input: str) -> list[str]:
+def tokenize(user_input: str) -> list[str] | None:
     tokens = []
     current = ''
     in_quotes = False  # This basically just controls whether spaces will be added and is toggled when a quote is hit
@@ -68,12 +73,18 @@ def tokenize(user_input: str) -> list[str]:
         if c in ['"', "'"]:
             # End quote
             if quote_char == c:
+                # TODO: ensure that the next char is a space
                 in_quotes = False
                 quote_char = ''
                 continue
 
             # Start quote
             if quote_char == '':
+                # Case like this: asd'asd'
+                if current != '':
+                    tui.error(f"Missing space between token and quote: {current}{c}")
+                    return None
+
                 in_quotes = True
                 quote_char = c
                 continue
@@ -82,9 +93,12 @@ def tokenize(user_input: str) -> list[str]:
         current += c
 
     # Add any leftover tokens if we aren't in a quote
-    if current:
+    # TODO: test - this doesn't work with a trailing quote
+    # TODO: test trailing quotes: "'" and "asd asd '"
+    if current != '':
         if in_quotes:
-            tui.error("Unfinished quoted string in input")
+            tui.error(f"Unfinished quoted string in input: {quote_char}{current}")
+            return None
         else:
             tokens.append(current)
 
