@@ -3,19 +3,20 @@ import images.converter as converter
 
 # Initialized later
 commands = {} # Command name -> command
+command_descriptions = {}  # Command name -> description
 name_to_aliases = {}  # Command name -> aliases
 alias_to_name = {}  # Alias -> command name
 
 def init() -> None:
-    register_command(quit_command, ["quit", "exit", "q"])
-    register_command(help_command, ["help"])
-    register_command(convert_file_command, ["convert-file"])
-    register_command(convert_folder_command, ["convert-folder"])
+    register_command(quit_command, ["quit", "exit", "q"], "Quit the program")
+    register_command(help_command, ["help"], "View a list of all commands and their descriptions")
+    register_command(convert_file_command, ["convert-file"], "Convert a single image file")
+    register_command(convert_folder_command, ["convert-folder"], "Convert an entire folder of images")
 
 # The first name in command_names will be the primary name and the others are aliases
-# TODO: add description support
-def register_command(command, command_names: list[str]) -> None:
+def register_command(command, command_names: list[str], description: str) -> None:
     commands[command_names[0]] = command
+    command_descriptions[command_names[0]] = description
 
     # Map aliases
     name_to_aliases[command_names[0]] = command_names[1:]
@@ -49,13 +50,14 @@ def parse_command(user_input: str) -> None:
 
 def quit_command(args: list[str]) -> None:
     print("Quitting...")
+    tui.reset_colors()
     exit(0)
 
 def help_command(args: list[str]) -> None:
     print("Available commands:")
     for cmd in commands.keys():
         # TODO: this is bad, clean this up
-        print(f"- {cmd}{'/' if len(name_to_aliases[cmd]) > 0 else ''}{'/'.join(name_to_aliases[cmd]) if len(name_to_aliases[cmd]) > 0 else ''}")
+        print(f"- {cmd}{'/' if len(name_to_aliases[cmd]) > 0 else ''}{'/'.join(name_to_aliases[cmd]) if len(name_to_aliases[cmd]) > 0 else ''} - {command_descriptions[cmd]}")
 
 # TODO: impl
 def convert_file_command(args: list[str]) -> None:

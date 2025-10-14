@@ -4,6 +4,7 @@ ESCAPE_CHAR = "\033["
 
 BG_COLOR = (36, 41, 46)
 USER_INPUT_COLOR = (255, 255, 0)
+INPUT_PROMPT_COLOR = (80, 170, 255)
 TEXT_COLOR = (255, 255, 255)
 ERROR_COLOR = (255, 0, 0)
 
@@ -11,7 +12,7 @@ def init() -> None:
     set_bg_color(BG_COLOR)
 
 def run_loop() -> None:
-    set_text_color(TEXT_COLOR)
+    set_text_color(INPUT_PROMPT_COLOR)
     print("Enter a command > ", end="")
 
     set_text_color(USER_INPUT_COLOR)
@@ -42,6 +43,8 @@ def error(message: str) -> None:
 def set_text_color(color: tuple[int, int, int]) -> None:
     print(f"{ESCAPE_CHAR}38;2;{color[0]};{color[1]};{color[2]}m", end="")
 
-# TODO: test this
 def set_bg_color(color: tuple[int, int, int]) -> None:
     print(f"{ESCAPE_CHAR}48;2;{color[0]};{color[1]};{color[2]}m", end="")
+
+def reset_colors() -> None:
+    print(f"{ESCAPE_CHAR}0m", end="")
