@@ -56,8 +56,13 @@ def quit_command(args: list[str]) -> None:
 def help_command(args: list[str]) -> None:
     print("Available commands:")
     for cmd in commands.keys():
-        # TODO: this is bad, clean this up
-        print(f"- {cmd}{'/' if len(name_to_aliases[cmd]) > 0 else ''}{'/'.join(name_to_aliases[cmd]) if len(name_to_aliases[cmd]) > 0 else ''} - {command_descriptions[cmd]}")
+        has_aliases = len(name_to_aliases[cmd]) > 0
+        if has_aliases:
+            command_names = '/'.join([cmd] + name_to_aliases[cmd])
+        else:
+            command_names = cmd
+
+        print(f"- {command_names} - {command_descriptions[cmd]}")
 
 # TODO: impl
 def convert_file_command(args: list[str]) -> None:
