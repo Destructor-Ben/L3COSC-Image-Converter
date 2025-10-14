@@ -53,6 +53,7 @@ def parse_command(user_input: str) -> None:
 # TODO: test lots of spaces, indivudual quotes, in each of the above examples, and unfinished quotes, and fiffereing quotes e.g. 'asd"
 # TODO: handle escaped quotes
 # TODO: handle asd'asd' and asd"asd"
+# TODO: test numeric input
 def tokenize(user_input: str) -> list[str] | None:
     tokens = []
     current = ''
