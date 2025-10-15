@@ -2,12 +2,30 @@ import tui
 import time
 import random
 
+# TODO: think a lot about the different types of inputs:
+# File
+# - input file (relative/absolute)
+# - output file type
+# - output file specified (relative/absolute, only works for single file)
+
+# Folder
+# - input folder
+# - output file type
+# - output folder (change input file/folder path to output folder)
+# - output folder not specified (put in a new "converted images" folder in cwd)
+
+# Output type settings
+# - set these in dedicated commands
+
 files_to_convert: list[str] = []
+conversion_type: str = ''
 
 # The functions below queue files to be converted on a conversion list
 
-def convert_file(file_path: str) -> None:
+# Path can be relative or absolute
+def convert_file(file_path: str, file_type: str) -> None:
     files_to_convert.append(file_path)
+    conversion_type = file_type
     process_files()
 
 # TODO: queue each file in the folder
@@ -19,6 +37,7 @@ def convert_folder(folder_path: str) -> None:
     files_to_convert.append(folder_path)
     files_to_convert.append(folder_path)
     files_to_convert.append(folder_path)
+    conversion_type = 'png'
     process_files()
 
 # Converts each file

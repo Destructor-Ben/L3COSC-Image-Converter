@@ -10,6 +10,7 @@ alias_to_name = {}  # Alias -> command name
 def init() -> None:
     register_command(quit_command, ["quit", "exit", "q"], "Quit the program")
     register_command(help_command, ["help"], "View a list of all commands and their descriptions")
+    # TODO: better descriptions for these 2 with actual explanations
     register_command(convert_file_command, ["convert-file"], "Convert a single image file")
     register_command(convert_folder_command, ["convert-folder"], "Convert an entire folder of images")
 
@@ -127,13 +128,13 @@ def help_command(args: list[str]) -> None:
 
         print(f"- {command_names} - {command_descriptions[cmd]}")
 
-# TODO: impl
+# TODO: allow optionally specifying the ouptut file path, and if not specified, then default to the same folder as the input file with the same name and a changed extension
 def convert_file_command(args: list[str]) -> None:
-    if len(args) != 1:
-        tui.error("convert-file requires exactly one argument, the file path")
+    if len(args) != 2:
+        tui.error("convert-file requires 2 arguments, the file path and the output file type")
         return
 
-    converter.convert_file(args[0])
+    converter.convert_file(args[0], args[1])
     
 # TODO: impl
 def convert_folder_command(args: list[str]) -> None:
