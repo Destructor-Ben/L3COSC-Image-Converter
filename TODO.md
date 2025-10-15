@@ -1,7 +1,5 @@
 # To Do
 
-- Keyboard interrupt support
-
 # Old
 #file_name = input("Please enter the name of the file you want to convert > ")
 # TODO: this should print the supported encoding/decoding formats

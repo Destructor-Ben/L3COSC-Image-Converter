@@ -21,6 +21,7 @@ def run_loop() -> None:
     set_text_color(TEXT_COLOR)
     commands.parse_command(user_input)
 
+# TODO: trial different colours and styles
 def update_conversion_state(num_converted: int, total_to_convert: int, recently_converted_file: str | None) -> None:
     percent = num_converted / total_to_convert * 100
 
