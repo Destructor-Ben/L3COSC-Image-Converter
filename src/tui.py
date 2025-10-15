@@ -22,20 +22,21 @@ def run_loop() -> None:
     commands.parse_command(user_input)
 
 # TODO: trial different colours and styles
-def update_conversion_state(num_converted: int, total_to_convert: int, recently_converted_file: str | None) -> None:
-    percent = num_converted / total_to_convert * 100
-
+def update_conversion_state(num_converted: int, total_to_convert: int, file: str, file_is_converted: bool) -> None:
     # Clear the current line (will be the progress bar)
     print(f"{ESCAPE_CHAR}2K", end="\r")
 
-    if recently_converted_file is not None:
-        print(f"Converted {recently_converted_file}")
+    if file_is_converted:
+        print(f"Converted {file}")
+    else:
+        print(f"Converting {file}...")
 
     # Print the progress bar
+    percent = num_converted / total_to_convert * 100
     bar_length = 30
     filled_length = int(bar_length * num_converted // total_to_convert)
     bar = '█' * filled_length + '-' * (bar_length - filled_length)
-    print(f"Progress: |{bar}| {percent:.0f}% ({num_converted}/{total_to_convert})", end="")
+    print(f"Progress: |{bar}| {percent:.0f}% ({num_converted}/{total_to_convert})", end="", flush=True)
 
 def error(message: str) -> None:
     set_text_color(ERROR_COLOR)

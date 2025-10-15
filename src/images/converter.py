@@ -27,14 +27,13 @@ def process_files() -> None:
     number_of_files = len(files_to_convert)
 
     for file in files_to_convert:
-        print(f"Converting {file}...")
-        tui.update_conversion_state(num_converted, number_of_files, None)
+        tui.update_conversion_state(num_converted, number_of_files, file, False)
 
         # TODO: actually convert, this is just dummy code
         time.sleep(random.randint(1, 3) / 2)
 
         num_converted += 1
-        tui.update_conversion_state(num_converted, number_of_files, file)
+        tui.update_conversion_state(num_converted, number_of_files, file, True)
 
     files_to_convert.clear()
 
