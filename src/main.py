@@ -2,7 +2,6 @@ import commands
 import tui
 
 def init() -> None:
-    tui.init()
     commands.init()
 
 def main() -> None:
