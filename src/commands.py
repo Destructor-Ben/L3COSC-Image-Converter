@@ -56,12 +56,14 @@ def tokenize(user_input: str) -> list[str] | None:
     quote_char = ''
     next_character_must_be_space = False
 
-    for c in user_input:
+    for i in range(len(user_input)):
+        c = user_input[i]
+
         # This character is after a quote, so it must be a space
         if next_character_must_be_space:
             next_character_must_be_space = False
             if c != ' ':
-                tui.error(f"Missing space between token and quote")
+                tui.error(f"Missing space between token and quote at index {i}")
                 return None
 
         # Add a finished token if it isn't empty
@@ -86,7 +88,7 @@ def tokenize(user_input: str) -> list[str] | None:
             if quote_char == '':
                 # Case like this: asd'asd'
                 if current != '':
-                    tui.error(f"Missing space between token and quote")
+                    tui.error(f"Missing space between token and quote at index {i}")
                     return None
 
                 in_quotes = True
@@ -98,7 +100,7 @@ def tokenize(user_input: str) -> list[str] | None:
 
     # Detect unfinished quotes
     if in_quotes:
-        tui.error(f"Unfinished quoted string in input: {quote_char}{current}")
+        tui.error(f"Unfinished quoted string: {quote_char}{current}")
         return None
 
     # Add any leftover tokens
