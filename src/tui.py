@@ -18,7 +18,6 @@ def run_loop() -> None:
     set_text_color(TEXT_COLOR)
     commands.parse_command(user_input)
 
-# TODO: trial different colours and styles
 def update_conversion_state(num_converted: int, total_to_convert: int, file: str, file_is_converted: bool) -> None:
     # Clear the current line (will be the progress bar)
     print(f"{ESCAPE_CHAR}2K", end="\r")

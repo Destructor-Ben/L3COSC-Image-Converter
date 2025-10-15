@@ -49,11 +49,6 @@ def parse_command(user_input: str) -> None:
     commands[command_name]([] if len(tokens) == 1 else tokens[1:])
 
 # Perform lexical analysis on the string to convert it to tokens (accounting for quotation marks)
-# TODO: temp, test string: asd asd "asd" 'asd' asd"asd" asd'asd' "asd"asd 'asd'asd 'asd "asd"' "asd 'asd'"
-# TODO: test lots of spaces, indivudual quotes, in each of the above examples, and unfinished quotes, and fiffereing quotes e.g. 'asd"
-# TODO: handle escaped quotes
-# TODO: handle asd'asd' and asd"asd"
-# TODO: test numeric input
 def tokenize(user_input: str) -> list[str] | None:
     tokens = []
     current = ''
@@ -101,19 +96,14 @@ def tokenize(user_input: str) -> list[str] | None:
         # Add the next char to the current token
         current += c
 
-    # Add any leftover tokens if we aren't in a quote
-    # TODO: test - this doesn't work with a trailing quote
-    # TODO: test trailing quotes: "'" and "asd asd '"
-    if current != '':
-        if in_quotes:
-            tui.error(f"Unfinished quoted string in input: {quote_char}{current}")
-            return None
-        else:
-            tokens.append(current)
+    # Detect unfinished quotes
+    if in_quotes:
+        tui.error(f"Unfinished quoted string in input: {quote_char}{current}")
+        return None
 
-    # TODO: temporary
-    for token in tokens:
-        print("- " + token)
+    # Add any leftover tokens
+    if current != '':
+        tokens.append(current)
 
     return tokens
 
