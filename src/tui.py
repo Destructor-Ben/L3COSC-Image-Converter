@@ -22,10 +22,10 @@ def update_conversion_state(num_converted: int, total_to_convert: int, file: str
     # Clear the current line (will be the progress bar)
     print(f"{ESCAPE_CHAR}2K", end="\r")
 
-    if file_is_converted:
-        print(f"Converted {file}")
-    else:
+    if not file_is_converted:
         print(f"Converting {file}...")
+    else:
+        print(f"Converted to {file}")
 
     # Print the progress bar
     percent = num_converted / total_to_convert * 100

@@ -1,6 +1,8 @@
 import tui
 import images.converter as converter
 
+from images.image_type import ImageType
+
 # Initialized later
 commands = {} # Command name -> command
 command_descriptions = {}  # Command name -> description
@@ -134,7 +136,8 @@ def convert_file_command(args: list[str]) -> None:
         tui.error("convert-file requires 2 arguments, the file path and the output file type")
         return
 
-    converter.convert_file(args[0], args[1])
+    # TODO: proper arg inputs
+    converter.convert_file(args[0], ImageType(args[1]))
     
 # TODO: impl
 def convert_folder_command(args: list[str]) -> None:
