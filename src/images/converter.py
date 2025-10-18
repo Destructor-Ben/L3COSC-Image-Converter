@@ -72,8 +72,6 @@ def convert_folder(target_type: ImageType, src_folder: str, dst_folder: str | No
         rel_path = src_file.relative_to(src_path)
         new_name = change_extension(rel_path.stem, target_type.to_extension())
         dst_file = dst_path_root / rel_path.parent / new_name
-        
-        print(f"{src_file.as_posix()} -> {dst_file.as_posix()}")
 
         src_extension = get_image_type(src_file)
         files_to_convert.append(FileToConvert(src_file.as_posix(), dst_file.as_posix(), src_extension))
