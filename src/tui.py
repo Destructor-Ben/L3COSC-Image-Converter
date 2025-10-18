@@ -8,9 +8,13 @@ TEXT_COLOR = (255, 255, 255)
 ERROR_COLOR = (255, 0, 0)
 PROGRESS_COLOR = (0, 200, 80)
 
+def init() -> None:
+    set_text_color(TEXT_COLOR)
+    print("To view all of the available commands, type 'help' and press enter")
+
 def run_loop() -> None:
     set_text_color(INPUT_PROMPT_COLOR)
-    print("Enter a command ('help' to view commands) > ", end="")
+    print("Enter a command > ", end="")
 
     set_text_color(USER_INPUT_COLOR)
     user_input = input()

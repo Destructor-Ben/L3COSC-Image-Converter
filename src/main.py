@@ -7,6 +7,7 @@ def init() -> None:
     commands.init()
     encoders.init()
     decoders.init()
+    tui.init()
 
 def main() -> None:
     # Execute commands continuously until the user wants to exit
