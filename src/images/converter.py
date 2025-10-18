@@ -19,7 +19,7 @@ class FileToConvert:
         self.src_image_type = src_image_type
 
 files_to_convert: list[FileToConvert] = []
-target_image_type: str = ''
+target_image_type: ImageType = ImageType.UNKNOWN
 
 # The 2 functions below queue files to be converted on files_to_convert
 
@@ -46,25 +46,49 @@ def convert_file(target_type: ImageType, src_path: str, dst_path: str | None) ->
     target_image_type = target_type
     process_files()
 
-# TODO: queue each file in the folder
 def convert_folder(target_type: ImageType, src_folder: str, dst_folder: str | None) -> None:
     global files_to_convert
     global target_image_type
 
-    files_to_convert.append(src_folder)
-    files_to_convert.append(src_folder)
-    files_to_convert.append(src_folder)
-    files_to_convert.append(src_folder)
-    files_to_convert.append(src_folder)
-    files_to_convert.append(src_folder)
-    files_to_convert.append(src_folder)
-    target_image_type = 'png'
+    if not os.path.isdir(src_folder):
+        tui.error(f"The folder '{src_folder}' does not exist")
+        return
+    
+    # Default destination folder
+    if dst_folder is None:
+        dst_folder = "converted/"
+    
+    if not os.path.exists(dst_folder):
+        os.makedirs(dst_folder, exist_ok=True)
+
+    # Recurse through src_folder, change extension and path, and add images to the queue
+    src_path = Path(src_folder)
+    dst_path_root = Path(dst_folder)
+    for src_file in src_path.rglob("*"):
+        if not src_file.is_file():
+            continue
+
+        # Calculate the destination file name
+        rel_path = src_file.relative_to(src_path)
+        new_name = change_extension(rel_path.stem, target_type.to_extension())
+        dst_file = dst_path_root / rel_path.parent / new_name
+        
+        print(f"{src_file.as_posix()} -> {dst_file.as_posix()}")
+
+        src_extension = get_image_type(src_file)
+        files_to_convert.append(FileToConvert(src_file.as_posix(), dst_file.as_posix(), src_extension))
+
+    target_image_type = target_type
     process_files()
 
 # Converts each file in the queue
 def process_files() -> None:
     num_converted = 0
     number_of_files = len(files_to_convert)
+
+    if number_of_files <= 0:
+        print("Warning: No files to convert")
+        return
 
     for file in files_to_convert:
         tui.update_conversion_state(num_converted, number_of_files, file.src_path, False)
@@ -97,7 +121,7 @@ def process_file(src_path: str, dst_path: str, src_type: ImageType, dst_type: Im
         # Directory needs to be created before writing to file
         dst_dir = os.path.dirname(dst_path)
         if dst_dir and not os.path.exists(dst_dir):
-            os.makedirs(dst_dir)
+            os.makedirs(dst_dir, exist_ok=True)
 
         with open(dst_path, "wb") as file:
             file.write(dst_bytes)
