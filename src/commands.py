@@ -2,19 +2,27 @@ import tui
 import images.converter as converter
 
 from images.image_type import ImageType
+from pathlib import Path
 
-# Initialized later
 commands = {} # Command name -> command
 command_descriptions = {}  # Command name -> description
 name_to_aliases = {}  # Command name -> aliases
 alias_to_name = {}  # Alias -> command name
 
+# Output type settings (e.g. jpeg quality)
+# - set these in dedicated commands
+
 def init() -> None:
     register_command(quit_command, ["quit", "exit", "q"], "Quit the program")
     register_command(help_command, ["help"], "View a list of all commands and their descriptions")
-    # TODO: better descriptions for these 2 with actual explanations
-    register_command(convert_file_command, ["convert-file"], "Convert a single image file")
-    register_command(convert_folder_command, ["convert-folder"], "Convert an entire folder of images")
+    register_command(convert_file_command, ["convert-file"],
+                     "Convert a single image file to a different image type\n" \
+                     "Usage: convert-file [Target file extension] [Source file path] [Target file path (Optional)]")
+    register_command(convert_folder_command, ["convert-folder"],
+                     "Convert an entire folder of images to a different image type\n" \
+                     "Usage: convert-folder [Target file extension] [Source folder path] [Target folder path (Optional)]")
+    # TODO: command to list supported formats
+    # TODO: command to set image quality?
 
 # The first name in command_names will be the primary name and the others are aliases
 def register_command(command, command_names: list[str], description: str) -> None:
@@ -128,23 +136,45 @@ def help_command(args: list[str]) -> None:
         else:
             command_names = cmd
 
-        print(f"- {command_names} - {command_descriptions[cmd]}")
+        # Ensure that multiple lines have the same indentation of the first line
+        first_line_prefix = f"- {command_names} - "
+        indentation = " " * len(first_line_prefix)
+        description_lines = command_descriptions[cmd].split("\n")
 
-# TODO: allow optionally specifying the ouptut file path, and if not specified, then default to the same folder as the input file with the same name and a changed extension
+        print(f"{first_line_prefix}{description_lines[0]}")
+        for line in description_lines[1:]:
+            print(f"{indentation}{line}")
+
 def convert_file_command(args: list[str]) -> None:
-    if len(args) != 2:
-        tui.error("convert-file requires 2 arguments, the file path and the output file type")
+    arg_count = len(args)
+    if arg_count != 2 and arg_count != 3:
+        tui.error(f"Incorrect number of arguments supplied ({arg_count} instead of 2 or 3)")
         return
-
-    # TODO: proper arg inputs
-    converter.convert_file(args[0], ImageType(args[1]))
     
-# TODO: impl
-def convert_folder_command(args: list[str]) -> None:
-    if len(args) != 1:
-        tui.error("convert-folder requires exactly one argument, the folder path")
+    image_type = ImageType.extension_to_img_type(args[0])
+    if image_type == ImageType.UNKNOWN:
+        tui.error(f"Unknown image type: {args[0]}")
         return
 
-    converter.convert_folder(args[0])
+    input_file = args[1]
+    output_file = args[2] if arg_count == 3 else None
+
+    converter.convert_file(image_type, input_file, output_file)
+
+def convert_folder_command(args: list[str]) -> None:
+    arg_count = len(args)
+    if arg_count != 2 and arg_count != 3:
+        tui.error(f"Incorrect number of arguments supplied ({arg_count} instead of 2 or 3)")
+        return
+    
+    image_type = ImageType.extension_to_img_type(args[0])
+    if image_type == ImageType.UNKNOWN:
+        tui.error(f"Unknown image type: {args[0]}")
+        return
+
+    input_folder = args[1]
+    output_folder = args[2] if arg_count == 3 else None
+
+    converter.convert_folder(image_type, input_folder, output_folder)
 
 #endregion

@@ -9,7 +9,6 @@ from pathlib import Path
 
 class FileToConvert:
     # Both of these include the file extension
-    # TODO: make the error message if a file isn't found in convert-file say "are you sure that you included the file extension?"
     src_path: str
     dst_path: str
 
@@ -17,50 +16,41 @@ class FileToConvert:
         self.src_path = src_path
         self.dst_path = dst_path
 
-# TODO: think a lot about the different types of inputs:
-# File
-# - input file (relative/absolute)
-# - output file type
-# - output file specified (relative/absolute, only works for single file)
-
-# Folder
-# - input folder
-# - output file type
-# - output folder (change input file/folder path to output folder)
-# - output folder not specified (put in a new "converted images" folder in cwd)
-
-# Output type settings
-# - set these in dedicated commands
-
 files_to_convert: list[FileToConvert] = []
 target_image_type: str = ''
 
 # The 2 functions below queue files to be converted on files_to_convert
 
 # Path can be relative or absolute
-def convert_file(file_path: str, target_type: ImageType) -> None:
+def convert_file(target_type: ImageType, src_path: str, dst_path: str | None) -> None:
     global files_to_convert
     global target_image_type
+    
+    # TODO: make the error message if a file isn't found in convert-file say "are you sure that you included the file extension?"
 
-    # TODO: proper ImageType -> file extension conversion
-    target_path = Path(file_path).with_suffix(f".{target_type.value}")
-    files_to_convert.append(FileToConvert(file_path, target_path.as_posix()))
+    # TODO: check that src_path exists and that dst_path isn't the same as src_path
+    # TODO: function to change extension?
+    # TODO: function to check if the src file exists, target file doesn't (unless exact path specified), and that both aren't the same
+    target_path = Path(src_path).with_suffix(f".{target_type.to_extension()}")
+
+    file_to_convert = FileToConvert(src_path, target_path.as_posix())
+    files_to_convert.append()
 
     target_image_type = target_type
     process_files()
 
 # TODO: queue each file in the folder
-def convert_folder(folder_path: str, target_type: ImageType) -> None:
+def convert_folder(target_type: ImageType, src_folder: str, dst_folder: str | None) -> None:
     global files_to_convert
     global target_image_type
 
-    files_to_convert.append(folder_path)
-    files_to_convert.append(folder_path)
-    files_to_convert.append(folder_path)
-    files_to_convert.append(folder_path)
-    files_to_convert.append(folder_path)
-    files_to_convert.append(folder_path)
-    files_to_convert.append(folder_path)
+    files_to_convert.append(src_folder)
+    files_to_convert.append(src_folder)
+    files_to_convert.append(src_folder)
+    files_to_convert.append(src_folder)
+    files_to_convert.append(src_folder)
+    files_to_convert.append(src_folder)
+    files_to_convert.append(src_folder)
     target_image_type = 'png'
     process_files()
 
@@ -91,7 +81,7 @@ def process_file(src_path: str, dst_path: str, src_type: ImageType, dst_type: Im
         src_bytes = file.read()
     
     # Convert to intermediate Image class then to target type
-    image = decoders.decode_image(src_type, src_bytes)
+    image: Image = decoders.decode_image(src_type, src_bytes)
     dst_bytes = encoders.encode_image(dst_type, image)
 
     with open(dst_path, "wb") as file:
