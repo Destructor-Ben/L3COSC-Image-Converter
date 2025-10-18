@@ -5,11 +5,6 @@ class ImageType(Enum):
     # The value of each member is the file extension in lowercase
     PNG = "png"
     JPEG = "jpg"
-    # TODO: add support for the below
-    #GIF = "gif"
-    #BMP = "bmp"
-    #TIFF = "tiff"
-    #WEBP = "webp"
     UNKNOWN = "unknown"  # Only used to detect user errors
 
     # Doesn't include the '.'
