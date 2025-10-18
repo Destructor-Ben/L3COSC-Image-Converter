@@ -28,14 +28,16 @@ def convert_file(target_type: ImageType, src_path: str, dst_path: str | None) ->
     global files_to_convert
     global target_image_type
 
-    src_extension = Path(src_path).suffix
-    src_extension = ImageType.from_extension(src_extension)
-    # TODO: check that src_path exists and that dst_path isn't the same as src_path
-    # TODO: function to change extension?
-    # TODO: function to check if the src file exists, target file doesn't (unless exact path specified), and that both aren't the same
-    target_path = Path(src_path).with_suffix(f".{target_type.to_extension()}")
+    if not os.path.isfile(src_path):
+        tui.error(f"The file '{src_path}' does not exist")
+        return
+    
+    # Default destination path
+    if dst_path is None:
+        dst_path = change_extension(src_path, target_type.to_extension())
 
-    files_to_convert.append(FileToConvert(src_path, target_path.as_posix()))
+    src_extension = get_image_type(src_path)
+    files_to_convert.append(FileToConvert(src_path, dst_path, src_extension))
 
     target_image_type = target_type
     process_files()
@@ -83,3 +85,9 @@ def process_file(src_path: str, dst_path: str, src_type: ImageType, dst_type: Im
 
     with open(dst_path, "wb") as file:
         file.write(dst_bytes)
+
+def change_extension(path: str, new_extension: str) -> str:
+    return Path(path).with_suffix(new_extension).as_posix()
+
+def get_image_type(path: str) -> ImageType:
+    return ImageType.from_extension(Path(path).suffix)

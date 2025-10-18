@@ -6,9 +6,9 @@ class ImageType(Enum):
     JPEG = "jpg"
     UNKNOWN = "unknown"  # Only used to detect user errors
 
-    # Doesn't include the '.'
+    # Includes the '.'
     def to_extension(self) -> str:
-        return self.value
+        return f".{self.value}"
 
     # Will remove a '.' at the start
     # Case insensitive
