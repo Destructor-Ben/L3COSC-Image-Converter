@@ -11,10 +11,12 @@ class FileToConvert:
     # Both of these include the file extension
     src_path: str
     dst_path: str
+    src_image_type: ImageType
 
-    def __init__(self, src_path: str, dst_path: str):
+    def __init__(self, src_path: str, dst_path: str, src_image_type: ImageType):
         self.src_path = src_path
         self.dst_path = dst_path
+        self.src_image_type = src_image_type
 
 files_to_convert: list[FileToConvert] = []
 target_image_type: str = ''
@@ -25,16 +27,15 @@ target_image_type: str = ''
 def convert_file(target_type: ImageType, src_path: str, dst_path: str | None) -> None:
     global files_to_convert
     global target_image_type
-    
-    # TODO: make the error message if a file isn't found in convert-file say "are you sure that you included the file extension?"
 
+    src_extension = Path(src_path).suffix
+    src_extension = ImageType.extension_to_img_type(src_extension)
     # TODO: check that src_path exists and that dst_path isn't the same as src_path
     # TODO: function to change extension?
     # TODO: function to check if the src file exists, target file doesn't (unless exact path specified), and that both aren't the same
     target_path = Path(src_path).with_suffix(f".{target_type.to_extension()}")
 
-    file_to_convert = FileToConvert(src_path, target_path.as_posix())
-    files_to_convert.append()
+    files_to_convert.append(FileToConvert(src_path, target_path.as_posix()))
 
     target_image_type = target_type
     process_files()
@@ -61,12 +62,8 @@ def process_files() -> None:
 
     for file in files_to_convert:
         tui.update_conversion_state(num_converted, number_of_files, file.src_path, False)
-        
-        # TODO: proper extension -> ImageType conversion
-        src_extension = Path(file.src_path).suffix.lower()
-        src_extension = src_extension[1:]  # Remove the '.' at the start
-        src_extension = ImageType(src_extension)
-        process_file(file.src_path, file.dst_path, src_extension, target_image_type)
+    
+        process_file(file.src_path, file.dst_path, file.src_image_type, target_image_type)
 
         num_converted += 1
         tui.update_conversion_state(num_converted, number_of_files, file.dst_path, True)

@@ -11,10 +11,13 @@ class ImageType(Enum):
     def to_extension(self) -> str:
         return self.value
 
-    # Do not include a '.' at the start (e.g. '.png' is wrong)
+    # Will remove a '.' at the start
     # Case insensitive
     @staticmethod
     def extension_to_img_type(extension: str) -> "ImageType":
+        if extension.startswith('.'):
+            extension = extension[1:]
+
         match extension.lower():
             case "png":
                 return ImageType.PNG
