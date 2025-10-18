@@ -36,6 +36,10 @@ def convert_file(target_type: ImageType, src_path: str, dst_path: str | None) ->
     if dst_path is None:
         dst_path = change_extension(src_path, target_type.to_extension())
 
+    if get_image_type(dst_path) != target_type:
+        tui.error(f"Desination file extension doesn't match target image type")
+        return
+
     src_extension = get_image_type(src_path)
     files_to_convert.append(FileToConvert(src_path, dst_path, src_extension))
 
@@ -65,7 +69,12 @@ def process_files() -> None:
     for file in files_to_convert:
         tui.update_conversion_state(num_converted, number_of_files, file.src_path, False)
     
-        process_file(file.src_path, file.dst_path, file.src_image_type, target_image_type)
+        error = process_file(file.src_path, file.dst_path, file.src_image_type, target_image_type)
+        if not error is None:
+            print()
+            tui.error(error)
+            files_to_convert.clear()
+            return
 
         num_converted += 1
         tui.update_conversion_state(num_converted, number_of_files, file.dst_path, True)
@@ -75,16 +84,27 @@ def process_files() -> None:
     # New line required, since the progress bar doesn't end with a newline
     print()
 
-def process_file(src_path: str, dst_path: str, src_type: ImageType, dst_type: ImageType) -> None:
-    with open(src_path, "rb") as file:
-        src_bytes = file.read()
-    
-    # Convert to intermediate Image class then to target type
-    image: Image = decoders.decode_image(src_type, src_bytes)
-    dst_bytes = encoders.encode_image(dst_type, image)
+# Returns an error string if it fails
+def process_file(src_path: str, dst_path: str, src_type: ImageType, dst_type: ImageType) -> None | str:
+    try:
+        with open(src_path, "rb") as file:
+            src_bytes = file.read()
+        
+        # Convert to intermediate Image class then to target type
+        image: Image = decoders.decode_image(src_type, src_bytes)
+        dst_bytes = encoders.encode_image(dst_type, image)
 
-    with open(dst_path, "wb") as file:
-        file.write(dst_bytes)
+        # Directory needs to be created before writing to file
+        dst_dir = os.path.dirname(dst_path)
+        if dst_dir and not os.path.exists(dst_dir):
+            os.makedirs(dst_dir)
+
+        with open(dst_path, "wb") as file:
+            file.write(dst_bytes)
+    except PermissionError:
+        return f"Insufficient permissions to read/write to source or destination file"
+    except Exception:
+        return "An unknown error occurred"
 
 def change_extension(path: str, new_extension: str) -> str:
     return Path(path).with_suffix(new_extension).as_posix()
