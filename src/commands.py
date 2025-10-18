@@ -15,14 +15,12 @@ alias_to_name = {}  # Alias -> command name
 def init() -> None:
     register_command(quit_command, ["quit", "exit", "q"], "Quit the program")
     register_command(help_command, ["help"], "View a list of all commands and their descriptions")
-    register_command(convert_file_command, ["convert-file"],
+    register_command(convert_file_command, ["convert-file", "cfi"],
                      "Convert a single image file to a different image type\n" \
                      "Usage: convert-file [Target file extension] [Source file path] [Target file path (Optional)]")
-    register_command(convert_folder_command, ["convert-folder"],
+    register_command(convert_folder_command, ["convert-folder", "cfo"],
                      "Convert an entire folder of images to a different image type\n" \
                      "Usage: convert-folder [Target file extension] [Source folder path] [Target folder path (Optional)]")
-    # TODO: command to list supported formats
-    # TODO: command to set image quality?
 
 # The first name in command_names will be the primary name and the others are aliases
 def register_command(command, command_names: list[str], description: str) -> None:
