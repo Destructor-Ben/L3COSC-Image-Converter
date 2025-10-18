@@ -1,6 +1,5 @@
 from enum import Enum
 
-# TODO: how to map file extensions to image type?
 class ImageType(Enum):
     # The value of each member is the file extension in lowercase
     PNG = "png"
@@ -14,7 +13,7 @@ class ImageType(Enum):
     # Will remove a '.' at the start
     # Case insensitive
     @staticmethod
-    def extension_to_img_type(extension: str) -> "ImageType":
+    def from_extension(extension: str) -> "ImageType":
         if extension.startswith('.'):
             extension = extension[1:]
 

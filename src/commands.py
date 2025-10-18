@@ -151,7 +151,7 @@ def convert_file_command(args: list[str]) -> None:
         tui.error(f"Incorrect number of arguments supplied ({arg_count} instead of 2 or 3)")
         return
     
-    image_type = ImageType.extension_to_img_type(args[0])
+    image_type = ImageType.from_extension(args[0])
     if image_type == ImageType.UNKNOWN:
         tui.error(f"Unknown image type: {args[0]}")
         return
@@ -167,7 +167,7 @@ def convert_folder_command(args: list[str]) -> None:
         tui.error(f"Incorrect number of arguments supplied ({arg_count} instead of 2 or 3)")
         return
     
-    image_type = ImageType.extension_to_img_type(args[0])
+    image_type = ImageType.from_extension(args[0])
     if image_type == ImageType.UNKNOWN:
         tui.error(f"Unknown image type: {args[0]}")
         return

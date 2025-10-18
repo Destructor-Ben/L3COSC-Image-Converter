@@ -29,7 +29,7 @@ def convert_file(target_type: ImageType, src_path: str, dst_path: str | None) ->
     global target_image_type
 
     src_extension = Path(src_path).suffix
-    src_extension = ImageType.extension_to_img_type(src_extension)
+    src_extension = ImageType.from_extension(src_extension)
     # TODO: check that src_path exists and that dst_path isn't the same as src_path
     # TODO: function to change extension?
     # TODO: function to check if the src file exists, target file doesn't (unless exact path specified), and that both aren't the same
