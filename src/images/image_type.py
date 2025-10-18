@@ -9,6 +9,12 @@ class ImageType(Enum):
     # Includes the '.'
     def to_extension(self) -> str:
         return f".{self.value}"
+    
+    def get_possible_extensions(self) -> str:
+        if self == ImageType.JPEG:
+            return ["jpg", "jpeg"]
+        
+        return [self.value]
 
     # Will remove a '.' at the start
     # Case insensitive

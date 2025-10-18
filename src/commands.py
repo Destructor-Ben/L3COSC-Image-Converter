@@ -15,6 +15,7 @@ alias_to_name = {}  # Alias -> command name
 def init() -> None:
     register_command(quit_command, ["quit", "exit", "q"], "Quit the program")
     register_command(help_command, ["help"], "View a list of all commands and their descriptions")
+    register_command(supported_formats_command, ["supported-formats"], "View a list of the supported image formats")
     register_command(convert_file_command, ["convert-file", "cfi"],
                      "Convert a single image file to a different image type\n" \
                      "Usage: convert-file [Target file extension] [Source file path] [Target file path (Optional)]")
@@ -142,6 +143,16 @@ def help_command(args: list[str]) -> None:
         print(f"{first_line_prefix}{description_lines[0]}")
         for line in description_lines[1:]:
             print(f"{indentation}{line}")
+
+def supported_formats_command(args: list[str]) -> None:
+    print("Supported formats:")
+    
+    for format in ImageType:
+        if format == ImageType.UNKNOWN:
+            continue
+
+        extension_list = "/".join(format.get_possible_extensions())
+        print(f"- {extension_list}")
 
 def convert_file_command(args: list[str]) -> None:
     arg_count = len(args)
