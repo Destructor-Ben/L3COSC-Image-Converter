@@ -8,6 +8,7 @@ encoders = {}
 def init() -> None:
     register_encoder(ImageType.PNG, get_encode_with_pil("PNG"))
     register_encoder(ImageType.JPEG, get_encode_with_pil("JPEG"))
+    register_encoder(ImageType.GIF, get_encode_with_pil("GIF"))
 
 def register_encoder(file_type: ImageType, encoder) -> None:
     encoders[file_type] = encoder

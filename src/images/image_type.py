@@ -4,6 +4,7 @@ class ImageType(Enum):
     # The value of each member is the file extension in lowercase
     PNG = "png"
     JPEG = "jpg"
+    GIF = "gif"
     UNKNOWN = "unknown"  # Only used to detect user errors
 
     # Includes the '.'
@@ -28,5 +29,7 @@ class ImageType(Enum):
                 return ImageType.PNG
             case "jpg" | "jpeg":
                 return ImageType.JPEG
+            case "gif":
+                return ImageType.GIF
             case _:
                 return ImageType.UNKNOWN

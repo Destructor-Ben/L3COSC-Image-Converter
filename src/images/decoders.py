@@ -8,6 +8,7 @@ decoders = {}
 def init() -> None:
     register_decoder(ImageType.PNG, decode_with_pil)
     register_decoder(ImageType.JPEG, decode_with_pil)
+    register_decoder(ImageType.GIF, decode_with_pil)
 
 def register_decoder(file_type: ImageType, decoder) -> None:
     decoders[file_type] = decoder
