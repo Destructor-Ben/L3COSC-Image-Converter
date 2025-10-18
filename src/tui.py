@@ -10,7 +10,7 @@ PROGRESS_COLOR = (148, 171, 247)
 
 def run_loop() -> None:
     set_text_color(INPUT_PROMPT_COLOR)
-    print("Enter a command ('help' to view command) > ", end="")
+    print("Enter a command ('help' to view commands) > ", end="")
 
     set_text_color(USER_INPUT_COLOR)
     user_input = input()

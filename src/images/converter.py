@@ -44,7 +44,7 @@ def convert_file(file_path: str, target_type: ImageType) -> None:
 
     # TODO: proper ImageType -> file extension conversion
     target_path = Path(file_path).with_suffix(f".{target_type.value}")
-    files_to_convert.append(FileToConvert(file_path, str(target_path).replace('\\', '/')))
+    files_to_convert.append(FileToConvert(file_path, target_path.as_posix()))
 
     target_image_type = target_type
     process_files()
