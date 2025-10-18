@@ -5,6 +5,8 @@ class ImageType(Enum):
     PNG = "png"
     JPEG = "jpg"
     GIF = "gif"
+    BMP = "bmp"
+    TIFF = "tiff"
     UNKNOWN = "unknown"  # Only used to detect user errors
 
     # Includes the '.'
@@ -31,5 +33,9 @@ class ImageType(Enum):
                 return ImageType.JPEG
             case "gif":
                 return ImageType.GIF
+            case "bmp":
+                return ImageType.BMP
+            case "tiff":
+                return ImageType.TIFF
             case _:
                 return ImageType.UNKNOWN
